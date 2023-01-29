@@ -2,7 +2,8 @@
 from alpaca.data.historical import CryptoHistoricalDataClient
 from alpaca.data.requests import CryptoBarsRequest
 from alpaca.data.timeframe import TimeFrame
-from alpaca.data.live import CryptoDataStream
+from alpaca.data.live import CryptoDataStream, StockDataStream
+
 
 import websocket
 import threading
@@ -36,8 +37,11 @@ class AlpacaSDKClient:
         self.api_endpoint = 'https://paper-api.alpaca.markets'
         self.API_KEY = 'PK5WWYWN5SA53KO74CYD'
         self.SECRET_KEY = '4xl5fDgTKjeFx5EMsOGjZf7uxPulZPNjNCbO9tau'
+        # crypto
         self.client = CryptoHistoricalDataClient()
         self.crypto_stream = CryptoDataStream(self.API_KEY, self.SECRET_KEY)
+        # stocks
+        self.stocks_stream = StockDataStream(self.API_KEY, self.SECRET_KEY)
 
     def get_historical_data(self):
         # Creating request object
@@ -63,7 +67,6 @@ class AlpacaSDKClient:
 
 class AlpacaClient:
     def __init__(self):
-        self.ws_endpoint_sandbox = 'wss://stream.data.sandbox.alpaca.markets/v2/'
         self.ws_endpoint = 'wss://stream.data.alpaca.markets/v2/'
         self.API_KEY = 'PK5WWYWN5SA53KO74CYD'
         self.SECRET_KEY = '4xl5fDgTKjeFx5EMsOGjZf7uxPulZPNjNCbO9tau'
@@ -93,7 +96,7 @@ class AlpacaClient:
 
     def start_ws_connection(self):
         websocket.enableTrace(False)
-        self._ws = websocket.WebSocketApp(self.ws_endpoint_sandbox + "iex",
+        self._ws = websocket.WebSocketApp(self.ws_endpoint + 'iex',
                                           on_open=self.on_open,
                                           on_message=self.on_message,
                                           on_error=self.on_error,
