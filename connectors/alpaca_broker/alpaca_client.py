@@ -7,6 +7,7 @@ from alpaca.trading.requests import MarketOrderRequest
 from alpaca.trading.client import TradingClient
 from alpaca.trading.enums import OrderSide, TimeInForce
 from alpaca.trading.models import Order
+from alpaca.data.enums import DataFeed
 
 import talib as ta
 import pandas as pd
@@ -47,6 +48,7 @@ class AlpacaSDKClient:
         self.crypto_stream = CryptoDataStream(self.API_KEY, self.SECRET_KEY)
         # stock
         self.stock_hist_data_client = StockHistoricalDataClient(self.API_KEY, self.SECRET_KEY)
+
         self.stock_stream = StockDataStream(self.API_KEY, self.SECRET_KEY)
         self.stock_paper_trading_client = TradingClient(self.API_KEY, self.SECRET_KEY, paper=True)
 
@@ -120,6 +122,10 @@ class AlpacaSDKClient:
         logger.info('Market order submitted with order id: ' + str(response.id))
         return response
 
+class Strategy:
+    def __init__(self):
+        pass
+
 
 class AlpacaClient:
     def __init__(self):
@@ -171,18 +177,19 @@ if __name__ == '__main__':
 
     # stream data through the SDK
     alpaca_sdk_client = AlpacaSDKClient()
-    alpaca_sdk_client.subscribe_to_trade_schema('TQQQ')
-    alpaca_sdk_client.run_stock_stream()
+    # alpaca_sdk_client.subscribe_to_trade_schema('TQQQ')
+    alpaca_sdk_client.subscribe_stock_bars('TQQQ')
+    # alpaca_sdk_client.run_stock_stream()
 
     # alpaca_client = AlpacaClient()
     # alpaca_client.establish_ws_connection()
 
     #
 
-    # tqqq_df = alpaca_sdk_client.get_stock_historical_data(['TQQQ'], TimeFrame.Minute)
-    # start_time = time.time()
-    # tqqq_df['9_day_ema'] = ta.EMA(tqqq_df['close'], timeperiod=9)
-    # tqqq_df['21_day_ema'] = ta.EMA(tqqq_df['close'], timeperiod=21)
-    # logger.info(f'here ---- {time.time() - start_time}')
+    tqqq_df = alpaca_sdk_client.get_stock_historical_data(['TQQQ'], TimeFrame.Minute)
+    start_time = time.time()
+    tqqq_df['9_day_ema'] = ta.EMA(tqqq_df['close'], timeperiod=9)
+    tqqq_df['21_day_ema'] = ta.EMA(tqqq_df['close'], timeperiod=21)
+    logger.info(f'here ---- {time.time() - start_time}')
     # alpaca_sdk_client.place_stock_market_order(symbol='TQQQ')
-    # print(tqqq_df)
+    print(tqqq_df)
